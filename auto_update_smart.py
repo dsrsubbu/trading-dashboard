@@ -71,7 +71,7 @@ def backfill_missing_dates(missing_dates):
 
             # Download BSE Bhavcopy using your existing code/method
             bse_downloader = BSEDownloaderWorking()
-            bse_downloader.download_bhav_for_date(date_obj)
+            bse_downloader.download_bse_bhav(date_obj)
             # (If you need BSE delivery, call its code here too)
 
             print(f"   ✅ NSE + BSE + Delivery downloaded")
@@ -209,7 +209,6 @@ if start_date <= end_date:
     print("=" * 70)
     nse_downloader = NSEDownloaderFixed()
     bse_downloader = BSEDownloaderWorking()
-    bse_downloader.download_bse_bhav(date_obj)
 
     downloaded = 0
 

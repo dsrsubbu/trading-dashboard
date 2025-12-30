@@ -33,3 +33,4 @@ data/combined_dashboard_live.csv
 diagnostic*.txt
 
 group_a[*
+/.venv
