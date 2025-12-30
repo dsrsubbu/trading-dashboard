@@ -1,4 +1,6 @@
 import os
+import logging
+from datetime import datetime
 
 class Config:
     # ===== DIRECTORY STRUCTURE =====
@@ -33,6 +35,42 @@ class Config:
         "stop_loss_pct": -15,            # Exit at -15% loss
         "time_stop_days": 60             # Exit after 60 days regardless
     }
+    
+    # ===== TRADING HOLIDAYS (Update annually) =====
+    TRADING_HOLIDAYS = [
+        "2025-01-26", "2025-03-14", "2025-03-29", "2025-04-10", "2025-04-14",
+        "2025-05-01", "2025-08-15", "2025-10-02", "2025-10-22",
+        "2025-11-01", "2025-11-05", "2025-12-25"
+    ]
+    
+    # ===== LOGGING CONFIGURATION =====
+    LOG_LEVEL = logging.INFO
+    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    
+    @staticmethod
+    def setup_logger(name: str) -> logging.Logger:
+        """Setup structured logging with file and console handlers"""
+        Config.ensure_dirs()
+        logger = logging.getLogger(name)
+        logger.setLevel(Config.LOG_LEVEL)
+        
+        # File handler - rotates daily
+        log_file = os.path.join(Config.LOGS_DIR, f"trading_dashboard_{datetime.now().strftime('%Y%m%d')}.log")
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(Config.LOG_LEVEL)
+        file_handler.setFormatter(logging.Formatter(Config.LOG_FORMAT))
+        
+        # Console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(Config.LOG_LEVEL)
+        console_handler.setFormatter(logging.Formatter(Config.LOG_FORMAT))
+        
+        # Avoid duplicate handlers
+        if not logger.handlers:
+            logger.addHandler(file_handler)
+            logger.addHandler(console_handler)
+        
+        return logger
     
     # ===== CREATE DIRECTORIES IF NOT EXIST =====
     @staticmethod

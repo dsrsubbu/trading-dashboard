@@ -1,11 +1,28 @@
 import pandas as pd
 
 class ProgressiveSpiker:
-    def __init__(self, df):
+    """12-condition Progressive Spike screener for stock signals"""
+    
+    def __init__(self, df: pd.DataFrame) -> None:
+        """
+        Initialize screener with dataset.
+        
+        Args:
+            df: DataFrame with columns: SYMBOL, CLOSE, DELIV_PER, DELIVERY_TURNOVER, ATW
+                and optionally: DELIV_PER_1W/1M/3M, DELIVERY_TURNOVER_1W/1M/3M, ATW_1W/1M/3M
+        """
         self.df = df
     
-    def get_signals(self):
-        """Filter stocks passing all 12 conditions"""
+    def get_signals(self) -> pd.DataFrame:
+        """Filter stocks passing all 12 conditions
+        
+        Conditions:
+        - Baseline (3): Delivery % >= 50, Delivery Turnover >= 5M, ATW >= 20K
+        - Progressive (9): For each metric, Today > 1W > 1M > 3M
+        
+        Returns:
+            DataFrame of stocks passing all conditions
+        """
         df = self.df.copy()
         
         required = ["SYMBOL", "CLOSE", "DELIV_PER", "DELIVERY_TURNOVER", "ATW"]
