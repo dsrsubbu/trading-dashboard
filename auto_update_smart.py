@@ -48,21 +48,21 @@ def get_missing_trading_dates(days_to_check=10):
 def backfill_missing_dates(missing_dates):
     """Download NSE + BSE data for all missing dates"""
     if not missing_dates:
-        logger.info("✅ No missing dates. Data is up to date.\n")
+        logger.info("[OK] No missing dates. Data is up to date.\n")
         return
 
     logger.warning(f"\n{'='*70}")
-    logger.warning(f"⚠️  MISSING DATA DETECTED")
+    logger.warning(f"[!] MISSING DATA DETECTED")
     logger.warning(f"{'='*70}")
     logger.warning(f"Found {len(missing_dates)} missing trading dates:")
     for date in missing_dates:
-        logger.warning(f"   📅 {date.strftime('%Y-%m-%d (%A)')}")
+        logger.warning(f"   - {date.strftime('%Y-%m-%d (%A)')}")
     logger.warning(f"{'='*70}\n")
-    logger.info("📥 Starting backfill download...\n")
+    logger.info("[>] Starting backfill download...\n")
 
     for date_obj in missing_dates:
         date_str = date_obj.strftime("%Y%m%d")
-        logger.info(f"🔄 Downloading: {date_obj.strftime('%Y-%m-%d')}")
+        logger.info(f"[~] Downloading: {date_obj.strftime('%Y-%m-%d')}")
         try:
             # Download NSE Bhavcopy and Delivery using correct methods
             nse_downloader = NSEDownloaderFixed()
@@ -74,18 +74,18 @@ def backfill_missing_dates(missing_dates):
             bse_downloader.download_bse_bhav(date_obj)
             # (If you need BSE delivery, call its code here too)
 
-            logger.info(f"   ✅ NSE + BSE + Delivery downloaded")
+            logger.info(f"   [OK] NSE + BSE + Delivery downloaded")
         except Exception as e:
-            logger.error(f"   ⚠️  Error: {e}", exc_info=True)
+            logger.error(f"   [!] Error: {e}", exc_info=True)
             continue
 
     logger.info(f"{'='*70}")
-    logger.info("✅ BACKFILL COMPLETE")
+    logger.info("[OK] BACKFILL COMPLETE")
     logger.info(f"{'='*70}\n")
 
 # Run backfill check and download loop
 logger.info(f"{'='*70}")
-logger.info("🔍 CHECKING FOR MISSING DATES...")
+logger.info("[*] CHECKING FOR MISSING DATES...")
 logger.info(f"{'='*70}")
 
 missing_dates = get_missing_trading_dates(days_to_check=10)

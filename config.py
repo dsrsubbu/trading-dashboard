@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from datetime import datetime
 
@@ -54,16 +55,24 @@ class Config:
         logger = logging.getLogger(name)
         logger.setLevel(Config.LOG_LEVEL)
         
-        # File handler - rotates daily
+        # File handler - rotates daily (UTF-8 encoding for emojis)
         log_file = os.path.join(Config.LOGS_DIR, f"trading_dashboard_{datetime.now().strftime('%Y%m%d')}.log")
-        file_handler = logging.FileHandler(log_file)
+        file_handler = logging.FileHandler(log_file, encoding='utf-8')
         file_handler.setLevel(Config.LOG_LEVEL)
         file_handler.setFormatter(logging.Formatter(Config.LOG_FORMAT))
         
-        # Console handler
-        console_handler = logging.StreamHandler()
+        # Console handler with UTF-8 support for Windows
+        # Use sys.stdout with UTF-8 encoding to handle emojis on Windows
+        console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(Config.LOG_LEVEL)
         console_handler.setFormatter(logging.Formatter(Config.LOG_FORMAT))
+        
+        # Set UTF-8 encoding for Windows console if possible
+        if sys.platform == 'win32':
+            try:
+                sys.stdout.reconfigure(encoding='utf-8')
+            except AttributeError:
+                pass  # Python < 3.7 doesn't have reconfigure
         
         # Avoid duplicate handlers
         if not logger.handlers:
